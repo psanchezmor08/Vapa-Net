@@ -58,8 +58,8 @@ class VapaNetApp:
                 ft.Text("v2.0", size=11, color=T.LIME_MUTED),
             ], spacing=16, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             bgcolor=T.DARK_SURFACE,
-            border=ft.border.only(bottom=ft.border.BorderSide(1, T.DARK_BORDER)),
-            padding=ft.padding.symmetric(horizontal=20, vertical=12),
+            border=ft.Border.only(bottom=ft.BorderSide(1, T.DARK_BORDER)),
+            padding=ft.Padding.symmetric(horizontal=20, vertical=12),
         )
 
         nav_def = [
@@ -69,7 +69,7 @@ class VapaNetApp:
             ("ping",       "Ping",               ft.Icons.WIFI_TETHERING,      ""),
             ("ports",      "Escáner de Puertos", ft.Icons.RADAR,               ""),
             ("dns",        "DNS Lookup",         ft.Icons.DNS,                 ""),
-            ("traceroute", "Traceroute",          ft.Icons.ROUTE,               ""),
+            ("traceroute", "Traceroute",         ft.Icons.ROUTE,               ""),
             ("batch",      "Batch Ping",         ft.Icons.PLAYLIST_PLAY,       ""),
             ("__sep2__",   "",                   None,                         "Monitorización"),
             ("sentinel",   "Sentinel",           ft.Icons.VISIBILITY,          ""),
@@ -92,24 +92,24 @@ class VapaNetApp:
             item = ft.Container(
                 content=row,
                 bgcolor=T.DARK_HOVER if is_active else "transparent",
-                border=ft.border.all(1, T.DARK_BORDER2 if is_active else "transparent"),
+                border=ft.Border.all(1, T.DARK_BORDER2 if is_active else "transparent"),
                 border_radius=8,
-                padding=ft.padding.symmetric(horizontal=10, vertical=8),
+                padding=ft.Padding.symmetric(horizontal=10, vertical=8),
                 on_click=lambda e, k=key: self._navigate(k),
                 ink=True,
-                margin=ft.margin.only(bottom=1),
+                margin=ft.Margin.only(bottom=1),
             )
             self._nav_items[key] = item
             sidebar_controls.append(
-                ft.Container(content=item, padding=ft.padding.symmetric(horizontal=8))
+                ft.Container(content=item, padding=ft.Padding.symmetric(horizontal=8))
             )
 
         sidebar = ft.Container(
             content=ft.Column(sidebar_controls, spacing=0, scroll=ft.ScrollMode.AUTO),
             bgcolor=T.DARK_SURFACE,
-            border=ft.border.only(right=ft.border.BorderSide(1, T.DARK_BORDER)),
+            border=ft.Border.only(right=ft.BorderSide(1, T.DARK_BORDER)),
             width=210,
-            padding=ft.padding.only(top=8, bottom=8),
+            padding=ft.Padding.only(top=8, bottom=8),
         )
 
         content_wrapper = ft.Container(
@@ -131,7 +131,7 @@ class VapaNetApp:
             row.controls[0].color = T.LIME if active else T.TEXT_SECONDARY
             row.controls[1].color = T.LIME if active else T.TEXT_SECONDARY
             container.bgcolor = T.DARK_HOVER if active else "transparent"
-            container.border = ft.border.all(1, T.DARK_BORDER2 if active else "transparent")
+            container.border = ft.Border.all(1, T.DARK_BORDER2 if active else "transparent")
 
         self._current_view = key
         self._content_area.controls.clear()

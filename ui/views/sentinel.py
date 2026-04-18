@@ -24,8 +24,7 @@ class SentinelView(ft.Column):
         self._interval_dd = T.dropdown_field(
             "Intervalo", ["10", "30", "60", "120", "300"],
             value="30", width=120,
-            on_change=lambda e: None
-        )
+            on_change=lambda e: None,        )
         self._toggle_btn = T.primary_button("▶ Iniciar monitor", on_click=self._toggle_monitor, width=180)
         self._status_label = ft.Text("Monitor detenido", size=12, color=T.TEXT_MUTED)
 

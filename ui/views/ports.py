@@ -27,7 +27,7 @@ class PortScanView(ft.Column):
     def _build(self):
         self._host_field = T.input_field("Host o IP", hint="192.168.1.1 / scanme.nmap.org")
         self._preset_dd = T.dropdown_field("Preset", list(PRESETS.keys()),
-                                           value="Común (top 22)", on_change=self._on_preset, width=200)
+                                           value="Común (top 22)", on_change=self._on_preset, width=200)  # on_change mapped to on_select in theme
         self._ports_field = T.input_field("Puertos", hint="22,80,443 / 8000-9000",
                                           value=PRESETS["Común (top 22)"])
         self._timeout_dd = T.dropdown_field("Timeout (s)", ["0.3", "0.5", "1", "2"],

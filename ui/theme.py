@@ -1,6 +1,7 @@
 """
 VapaNet — Sistema de diseño / tema visual
 Paleta Vapa: verde lima sobre fondo azul-noche
+Compatible con Flet 0.80+
 """
 
 import flet as ft
@@ -31,12 +32,6 @@ STATUS_WARN   = "#F5A623"
 STATUS_PEND   = "#7A8BB0"
 
 # ──────────────────────────────────────────────
-# TIPOGRAFÍA
-# ──────────────────────────────────────────────
-
-FONT_MONO = "Consolas, 'Courier New', monospace"
-
-# ──────────────────────────────────────────────
 # HELPERS DE ESTILO
 # ──────────────────────────────────────────────
 
@@ -44,7 +39,7 @@ def card(content, padding=16, border_color=DARK_BORDER) -> ft.Container:
     return ft.Container(
         content=content,
         bgcolor=DARK_SURFACE,
-        border=ft.border.all(1, border_color),
+        border=ft.Border.all(1, border_color),
         border_radius=10,
         padding=padding,
     )
@@ -54,7 +49,7 @@ def lime_card(content, padding=16) -> ft.Container:
     return ft.Container(
         content=content,
         bgcolor=DARK_PANEL,
-        border=ft.border.all(1, LIME_DIM),
+        border=ft.Border.all(1, LIME_DIM),
         border_radius=10,
         padding=padding,
     )
@@ -90,7 +85,7 @@ def metric_card(label_text: str, value: str, unit: str = "", trend: str = "") ->
     return ft.Container(
         content=ft.Column(children, spacing=4, tight=True),
         bgcolor=DARK_PANEL,
-        border=ft.border.all(1, DARK_BORDER),
+        border=ft.Border.all(1, DARK_BORDER),
         border_radius=8,
         padding=12,
         expand=True,
@@ -118,20 +113,20 @@ def status_badge(status: str) -> ft.Container:
     return ft.Container(
         content=ft.Text(text, size=10, weight=ft.FontWeight.W_500, color=fg),
         bgcolor=bg,
-        border=ft.border.all(1, fg + "44"),
+        border=ft.Border.all(1, fg + "44"),
         border_radius=5,
-        padding=ft.padding.symmetric(horizontal=7, vertical=3),
+        padding=ft.Padding.symmetric(horizontal=7, vertical=3),
     )
 
 
-def primary_button(text: str, on_click=None, icon=None, width=None) -> ft.ElevatedButton:
-    return ft.ElevatedButton(
-        text=text,
+def primary_button(text: str, on_click=None, icon=None, width=None) -> ft.Button:
+    return ft.Button(
+        content=text,
         icon=icon,
         on_click=on_click,
+        bgcolor=LIME,
+        color=DARK_BG,
         style=ft.ButtonStyle(
-            bgcolor=LIME,
-            color=DARK_BG,
             shape=ft.RoundedRectangleBorder(radius=8),
             text_style=ft.TextStyle(weight=ft.FontWeight.W_500, size=13),
         ),
@@ -141,7 +136,7 @@ def primary_button(text: str, on_click=None, icon=None, width=None) -> ft.Elevat
 
 def secondary_button(text: str, on_click=None, icon=None, width=None) -> ft.OutlinedButton:
     return ft.OutlinedButton(
-        text=text,
+        content=text,
         icon=icon,
         on_click=on_click,
         style=ft.ButtonStyle(
@@ -178,9 +173,9 @@ def alert_row(text: str, color: str = LIME) -> ft.Container:
             ft.Text(text, size=12, color=TEXT_PRIMARY, expand=True),
         ], spacing=10),
         bgcolor=DARK_PANEL,
-        border=ft.border.all(1, color + "44"),
+        border=ft.Border.all(1, color + "44"),
         border_radius=8,
-        padding=ft.padding.symmetric(horizontal=14, vertical=10),
+        padding=ft.Padding.symmetric(horizontal=14, vertical=10),
     )
 
 
@@ -198,7 +193,7 @@ def input_field(label_text: str, hint: str = "", value: str = "",
         label_style=ft.TextStyle(color=TEXT_SECONDARY, size=12),
         text_style=ft.TextStyle(color=TEXT_PRIMARY, size=13),
         border_radius=8,
-        content_padding=ft.padding.symmetric(horizontal=12, vertical=10),
+        content_padding=ft.Padding.symmetric(horizontal=12, vertical=10),
         expand=expand,
     )
 
@@ -208,8 +203,8 @@ def dropdown_field(label_text: str, options: list, value: str = "",
     return ft.Dropdown(
         label=label_text,
         value=value,
-        options=[ft.dropdown.Option(o) for o in options],
-        on_change=on_change,
+        options=[ft.dropdown.Option(key=o, text=o) for o in options],
+        on_select=on_change,
         bgcolor=DARK_PANEL,
         border_color=DARK_BORDER,
         focused_border_color=LIME,
@@ -233,7 +228,7 @@ def progress_bar(value=None, color=LIME) -> ft.ProgressBar:
 def nav_item(icon, label_text: str, active: bool = False, on_click=None, badge: int = 0) -> ft.Container:
     bg = DARK_HOVER if active else "transparent"
     color = LIME if active else TEXT_SECONDARY
-    border = ft.border.all(1, DARK_BORDER2) if active else ft.border.all(1, "transparent")
+    border = ft.Border.all(1, DARK_BORDER2) if active else ft.Border.all(1, "transparent")
 
     row_children = [
         ft.Icon(icon, size=16, color=color),
@@ -245,7 +240,7 @@ def nav_item(icon, label_text: str, active: bool = False, on_click=None, badge: 
                 content=ft.Text(str(badge), size=10, weight=ft.FontWeight.W_500, color=DARK_BG),
                 bgcolor=LIME,
                 border_radius=8,
-                padding=ft.padding.symmetric(horizontal=6, vertical=1),
+                padding=ft.Padding.symmetric(horizontal=6, vertical=1),
             )
         )
 
@@ -254,16 +249,15 @@ def nav_item(icon, label_text: str, active: bool = False, on_click=None, badge: 
         bgcolor=bg,
         border=border,
         border_radius=8,
-        padding=ft.padding.symmetric(horizontal=10, vertical=8),
+        padding=ft.Padding.symmetric(horizontal=10, vertical=8),
         on_click=on_click,
         ink=True,
-        margin=ft.margin.only(bottom=1),
+        margin=ft.Margin.only(bottom=1),
     )
 
 
 def section_label(text: str) -> ft.Container:
     return ft.Container(
-        content=ft.Text(text.upper(), size=10, weight=ft.FontWeight.W_500,
-                        color=TEXT_MUTED),
-        padding=ft.padding.only(left=8, top=10, bottom=4),
+        content=ft.Text(text.upper(), size=10, weight=ft.FontWeight.W_500, color=TEXT_MUTED),
+        padding=ft.Padding.only(left=8, top=10, bottom=4),
     )
