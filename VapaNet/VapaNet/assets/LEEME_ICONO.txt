@@ -1,6 +1,0 @@
-Coloca aquí tu archivo icon.ico (256x256, formato ICO).
-
-Si no tienes uno, puedes:
-1. Usar cualquier convertidor online (png a ico) con el logo de Vapa
-2. O eliminar la línea `icon='assets/icon.ico'` del build.spec
-   para compilar sin icono personalizado.
