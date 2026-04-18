@@ -31,8 +31,8 @@ class BatchPingView(ft.Column):
         )
         self._count_dd = T.dropdown_field("Paquetes", ["1", "2", "4"], value="2", width=110)
         self._run_btn = T.primary_button("Ejecutar Batch", on_click=self._start,
-                                         icon=ft.icons.PLAYLIST_PLAY)
-        self._stop_btn = T.secondary_button("Detener", on_click=self._stop)
+                                         icon=ft.Icons.PLAYLIST_PLAY)
+        self._stop_btn = T.secondary_button("Detener", on_click=self._stop, icon=ft.Icons.STOP)
         self._stop_btn.visible = False
         self._progress = T.progress_bar(value=0)
         self._progress_label = ft.Text("", size=11, color=T.TEXT_MUTED)
@@ -40,7 +40,6 @@ class BatchPingView(ft.Column):
         self._stats_row = ft.Row([], spacing=10)
         self._results_col = ft.Column(spacing=4)
 
-        # Example hosts button
         example_btn = ft.TextButton(
             "Cargar ejemplos",
             on_click=self._load_examples,

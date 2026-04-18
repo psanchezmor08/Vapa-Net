@@ -17,9 +17,8 @@ class SubnetView(ft.Column):
             "CIDR o IP con máscara",
             hint="192.168.1.0/24  ó  10.0.0.0 255.0.0.0"
         )
-        self._run_btn = T.primary_button("Calcular", on_click=self._calc, icon=ft.icons.CALCULATE)
+        self._run_btn = T.primary_button("Calcular", on_click=self._calc, icon=ft.Icons.CALCULATE)
 
-        # Quick presets
         presets = [
             ("/8 — Clase A", "10.0.0.0/8"),
             ("/16 — Clase B", "172.16.0.0/16"),
@@ -76,7 +75,6 @@ class SubnetView(ft.Column):
             self.update()
             return
 
-        # Main metrics
         metrics = ft.Row([
             T.metric_card("Red", res["network"]),
             T.metric_card("Broadcast", res["broadcast"]),

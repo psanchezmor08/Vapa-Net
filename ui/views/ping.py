@@ -17,7 +17,7 @@ class PingView(ft.Column):
         self._host_field = T.input_field("Host o IP", hint="google.com / 8.8.8.8")
         self._count_dd = T.dropdown_field("Paquetes", ["1", "2", "4", "8", "16"], value="4", width=110)
         self._timeout_dd = T.dropdown_field("Timeout (s)", ["1", "2", "3", "5"], value="2", width=130)
-        self._run_btn = T.primary_button("Ping", on_click=self._run, icon=ft.icons.WIFI_TETHERING)
+        self._run_btn = T.primary_button("Ping", on_click=self._run, icon=ft.Icons.WIFI_TETHERING)
         self._output = ft.Text("", size=12, color=T.TEXT_PRIMARY, font_family="Consolas",
                                selectable=True)
         self._status_badge = ft.Container(visible=False)
@@ -25,6 +25,15 @@ class PingView(ft.Column):
 
         self._history_col = ft.Column(spacing=5)
         self._load_history()
+
+        self._out_container = ft.Container(
+            content=self._output,
+            bgcolor=T.DARK_BG,
+            border=ft.border.all(1, T.DARK_BORDER),
+            border_radius=8,
+            padding=12,
+            visible=False,
+        )
 
         self.controls = [
             ft.Column([
@@ -36,27 +45,13 @@ class PingView(ft.Column):
                 ft.Row([self._host_field, self._count_dd, self._timeout_dd], spacing=10),
                 ft.Row([self._run_btn, self._status_badge, self._avg_text], spacing=12,
                        vertical_alignment=ft.CrossAxisAlignment.CENTER),
-                ft.Container(
-                    content=self._output,
-                    bgcolor=T.DARK_BG,
-                    border=ft.border.all(1, T.DARK_BORDER),
-                    border_radius=8,
-                    padding=12,
-                    min_height=140,
-                    visible=False,
-                    ref=ft.Ref(),
-                ),
-            ], spacing=10), ref=self._get_output_container_ref()),
+                self._out_container,
+            ], spacing=10)),
 
             T.divider(),
             ft.Text("Historial de pings", size=14, weight=ft.FontWeight.W_500, color=T.TEXT_PRIMARY),
             self._history_col,
         ]
-        # Keep reference to output container
-        self._out_container = self.controls[1].content.controls[2]
-
-    def _get_output_container_ref(self):
-        return None
 
     def _load_history(self):
         rows = db.get_ping_history(15)

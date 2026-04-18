@@ -19,7 +19,7 @@ class SentinelView(ft.Column):
     def _build(self):
         self._host_field = T.input_field("Host o IP", hint="192.168.1.1", expand=True)
         self._alias_field = T.input_field("Alias (opcional)", hint="Router principal", expand=True)
-        self._add_btn = T.primary_button("Añadir", on_click=self._add_host, icon=ft.icons.ADD)
+        self._add_btn = T.primary_button("Añadir", on_click=self._add_host, icon=ft.Icons.ADD)
 
         self._interval_dd = T.dropdown_field(
             "Intervalo", ["10", "30", "60", "120", "300"],
@@ -81,7 +81,7 @@ class SentinelView(ft.Column):
                 ft.Text(f"{ms:.0f} ms" if ms else "—", size=13, color=T.LIME, width=70),
                 ft.Text(last or "Sin revisar", size=11, color=T.TEXT_MUTED, width=130),
                 T.status_badge(status),
-                T.icon_button(ft.icons.DELETE_OUTLINE, color=T.STATUS_DOWN,
+                T.icon_button(ft.Icons.DELETE_OUTLINE, color=T.STATUS_DOWN,
                               on_click=lambda e, hid=h["id"]: self._delete_host(hid),
                               tooltip="Eliminar"),
             ], spacing=10)
@@ -147,7 +147,6 @@ class SentinelView(ft.Column):
                 self.update()
             except Exception:
                 pass
-            # Sleep in chunks so we can interrupt
             for _ in range(interval * 2):
                 if not self._monitoring:
                     break

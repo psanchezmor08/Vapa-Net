@@ -17,7 +17,7 @@ class TracerouteView(ft.Column):
     def _build(self):
         self._host_field = T.input_field("Host o IP destino", hint="google.com / 1.1.1.1")
         self._maxhops_dd = T.dropdown_field("Máx saltos", ["10", "20", "30"], value="20", width=130)
-        self._run_btn = T.primary_button("Trazar ruta", on_click=self._start, icon=ft.icons.ROUTE)
+        self._run_btn = T.primary_button("Trazar ruta", on_click=self._start, icon=ft.Icons.ROUTE)
         self._stop_btn = T.secondary_button("Detener", on_click=self._stop)
         self._stop_btn.visible = False
         self._status_label = ft.Text("", size=12, color=T.TEXT_SECONDARY)
@@ -70,7 +70,6 @@ class TracerouteView(ft.Column):
             ms = hop.get("avg_ms")
             ms_str = f"{ms:.1f} ms" if ms else "*"
 
-            # Bar proportional to latency
             if ms and ms > max_ms[0]:
                 max_ms[0] = ms
             bar_w = int((ms / max_ms[0]) * 120) if ms and max_ms[0] > 0 else 4

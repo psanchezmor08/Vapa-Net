@@ -18,7 +18,7 @@ class MonitorView(ft.Column):
     def _build(self):
         self._url_field = T.input_field("URL", hint="https://ejemplo.com / mi-servidor.local", expand=True)
         self._alias_field = T.input_field("Alias (opcional)", hint="Portal clientes", expand=True)
-        self._add_btn = T.primary_button("Añadir", on_click=self._add_url, icon=ft.icons.ADD)
+        self._add_btn = T.primary_button("Añadir", on_click=self._add_url, icon=ft.Icons.ADD)
 
         self._interval_dd = T.dropdown_field(
             "Intervalo (s)", ["15", "30", "60", "120", "300"],
@@ -77,7 +77,7 @@ class MonitorView(ft.Column):
             ft.Text(f"{ms:.0f} ms" if ms else "—", size=13, color=T.LIME, width=65),
             ft.Text(last or "Sin revisar", size=11, color=T.TEXT_MUTED, width=130),
             T.status_badge(status),
-            T.icon_button(ft.icons.DELETE_OUTLINE, color=T.STATUS_DOWN,
+            T.icon_button(ft.Icons.DELETE_OUTLINE, color=T.STATUS_DOWN,
                           on_click=lambda e, uid=u["id"]: self._delete(uid),
                           tooltip="Eliminar"),
         ], spacing=8))

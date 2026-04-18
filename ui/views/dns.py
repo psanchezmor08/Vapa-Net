@@ -17,7 +17,7 @@ class DNSView(ft.Column):
         self._domain_field = T.input_field("Dominio", hint="google.com / anthropic.com")
         self._type_dd = T.dropdown_field("Tipo de registro",
                                          network.COMMON_RECORD_TYPES, value="A", width=140)
-        self._run_btn = T.primary_button("Consultar", on_click=self._run, icon=ft.icons.SEARCH)
+        self._run_btn = T.primary_button("Consultar", on_click=self._run, icon=ft.Icons.SEARCH)
         self._results_col = ft.Column(spacing=8)
         self._raw_text = ft.Text("", size=11, color=T.TEXT_MUTED, font_family="Consolas",
                                  selectable=True)
@@ -109,7 +109,6 @@ class DNSView(ft.Column):
             res = network.dns_lookup(domain, rtype)
             self._results_col.controls.clear()
 
-            # Stats card
             ms_text = f"{res['resolve_ms']:.0f} ms"
             self._results_col.controls.append(
                 ft.Row([

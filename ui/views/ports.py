@@ -32,8 +32,8 @@ class PortScanView(ft.Column):
                                           value=PRESETS["Común (top 22)"])
         self._timeout_dd = T.dropdown_field("Timeout (s)", ["0.3", "0.5", "1", "2"],
                                             value="0.5", width=130)
-        self._run_btn = T.primary_button("Escanear", on_click=self._start, icon=ft.icons.RADAR)
-        self._stop_btn = T.secondary_button("Detener", on_click=self._stop, icon=ft.icons.STOP)
+        self._run_btn = T.primary_button("Escanear", on_click=self._start, icon=ft.Icons.RADAR)
+        self._stop_btn = T.secondary_button("Detener", on_click=self._stop, icon=ft.Icons.STOP)
         self._stop_btn.visible = False
 
         self._progress = T.progress_bar(value=0)

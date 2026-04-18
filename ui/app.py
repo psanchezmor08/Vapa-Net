@@ -1,6 +1,6 @@
 """
 VapaNet — Shell principal de la aplicación (sidebar + navegación)
-Compatible con Flet 0.21.x, 0.22.x, 0.23.x, 0.24.x
+Compatible con Flet 0.80+
 """
 
 import flet as ft
@@ -9,29 +9,13 @@ from core import db
 
 
 def _set_window(page: ft.Page, width, height, min_width, min_height):
-    if hasattr(page, "window") and page.window is not None:
-        try:
-            page.window.width = width
-            page.window.height = height
-            page.window.min_width = min_width
-            page.window.min_height = min_height
-            return
-        except Exception:
-            pass
-    for attr, val in [
-        ("window_width", width), ("window_height", height),
-        ("window_min_width", min_width), ("window_min_height", min_height),
-    ]:
-        try:
-            setattr(page, attr, val)
-        except Exception:
-            pass
-
-
-def _center_align():
-    if hasattr(ft.alignment, "center"):
-        return ft.alignment.center
-    return ft.Alignment(0, 0)
+    try:
+        page.window.width = width
+        page.window.height = height
+        page.window.min_width = min_width
+        page.window.min_height = min_height
+    except Exception:
+        pass
 
 
 class VapaNetApp:
@@ -59,7 +43,7 @@ class VapaNetApp:
                         bgcolor=T.LIME,
                         width=30, height=30,
                         border_radius=8,
-                        alignment=_center_align(),
+                        alignment=ft.alignment.Alignment(0, 0),
                     ),
                     ft.Column([
                         ft.Text("VapaNet", size=15, weight=ft.FontWeight.W_500, color=T.LIME),
@@ -71,7 +55,7 @@ class VapaNetApp:
                     ft.Container(width=7, height=7, bgcolor=T.STATUS_UP, border_radius=4),
                     ft.Text("Sistema activo", size=11, color=T.TEXT_MUTED),
                 ], spacing=6),
-                ft.Text("v1.0", size=11, color=T.LIME_MUTED),
+                ft.Text("v2.0", size=11, color=T.LIME_MUTED),
             ], spacing=16, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             bgcolor=T.DARK_SURFACE,
             border=ft.border.only(bottom=ft.border.BorderSide(1, T.DARK_BORDER)),
@@ -79,20 +63,20 @@ class VapaNetApp:
         )
 
         nav_def = [
-            ("dashboard",  "Dashboard",          ft.icons.GRID_VIEW_ROUNDED, ""),
-            ("__sep1__",   "",                   None,                       "Herramientas"),
-            ("speed",      "Speed Test",         ft.icons.SPEED,             ""),
-            ("ping",       "Ping",               ft.icons.WIFI_TETHERING,    ""),
-            ("ports",      "Escáner de Puertos", ft.icons.RADAR,             ""),
-            ("dns",        "DNS Lookup",         ft.icons.DNS,               ""),
-            ("traceroute", "Traceroute",          ft.icons.ROUTE,             ""),
-            ("batch",      "Batch Ping",         ft.icons.PLAYLIST_PLAY,     ""),
-            ("__sep2__",   "",                   None,                       "Monitorización"),
-            ("sentinel",   "Sentinel",           ft.icons.VISIBILITY,        ""),
-            ("monitor",    "Monitor URLs",       ft.icons.LINK,              ""),
-            ("__sep3__",   "",                   None,                       "Utilidades"),
-            ("subnet",     "Subnet Calc",        ft.icons.CALCULATE,         ""),
-            ("whois",      "WHOIS",              ft.icons.INFO_OUTLINE,      ""),
+            ("dashboard",  "Dashboard",          ft.Icons.GRID_VIEW_ROUNDED,  ""),
+            ("__sep1__",   "",                   None,                         "Herramientas"),
+            ("speed",      "Speed Test",         ft.Icons.SPEED,               ""),
+            ("ping",       "Ping",               ft.Icons.WIFI_TETHERING,      ""),
+            ("ports",      "Escáner de Puertos", ft.Icons.RADAR,               ""),
+            ("dns",        "DNS Lookup",         ft.Icons.DNS,                 ""),
+            ("traceroute", "Traceroute",          ft.Icons.ROUTE,               ""),
+            ("batch",      "Batch Ping",         ft.Icons.PLAYLIST_PLAY,       ""),
+            ("__sep2__",   "",                   None,                         "Monitorización"),
+            ("sentinel",   "Sentinel",           ft.Icons.VISIBILITY,          ""),
+            ("monitor",    "Monitor URLs",       ft.Icons.LINK,                ""),
+            ("__sep3__",   "",                   None,                         "Utilidades"),
+            ("subnet",     "Subnet Calc",        ft.Icons.CALCULATE,           ""),
+            ("whois",      "WHOIS",              ft.Icons.INFO_OUTLINE,        ""),
         ]
 
         sidebar_controls = []

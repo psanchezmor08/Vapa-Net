@@ -16,7 +16,7 @@ class WhoisView(ft.Column):
     def _build(self):
         self._domain_field = T.input_field("Dominio", hint="google.com / anthropic.com")
         self._run_btn = T.primary_button("Consultar WHOIS", on_click=self._run,
-                                         icon=ft.icons.INFO_OUTLINE)
+                                         icon=ft.Icons.INFO_OUTLINE)
         self._status_label = ft.Text("", size=12, color=T.TEXT_MUTED)
         self._raw_text = ft.Text("", size=12, color=T.TEXT_PRIMARY,
                                  font_family="Consolas", selectable=True)
@@ -72,7 +72,6 @@ class WhoisView(ft.Column):
             )
 
             if res["success"]:
-                # Parse key fields from raw
                 parsed = _parse_whois_fields(res["raw"])
                 if parsed:
                     rows = []
