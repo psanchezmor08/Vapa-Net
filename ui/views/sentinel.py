@@ -110,13 +110,19 @@ class SentinelView(ft.Column):
         if self._monitoring:
             self._monitoring = False
             self._toggle_btn.text = "▶ Iniciar monitor"
-            self._toggle_btn.bgcolor = T.LIME
+            self._toggle_btn.style = ft.ButtonStyle(
+                bgcolor=T.LIME, color=T.DARK_BG,
+                shape=ft.RoundedRectangleBorder(radius=8),
+            )
             self._status_label.value = "Monitor detenido"
             self.update()
         else:
             self._monitoring = True
             self._toggle_btn.text = "⏹ Detener monitor"
-            self._toggle_btn.bgcolor = T.STATUS_DOWN
+            self._toggle_btn.style = ft.ButtonStyle(
+                bgcolor=T.STATUS_DOWN, color=T.TEXT_PRIMARY,
+                shape=ft.RoundedRectangleBorder(radius=8),
+            )
             self._status_label.value = "Monitor activo…"
             self.update()
             self._monitor_thread = threading.Thread(target=self._monitor_loop, daemon=True)

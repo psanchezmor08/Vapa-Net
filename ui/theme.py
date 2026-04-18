@@ -129,9 +129,9 @@ def primary_button(text: str, on_click=None, icon=None, width=None) -> ft.Elevat
         text=text,
         icon=icon,
         on_click=on_click,
-        bgcolor=LIME,
-        color=DARK_BG,
         style=ft.ButtonStyle(
+            bgcolor=LIME,
+            color=DARK_BG,
             shape=ft.RoundedRectangleBorder(radius=8),
             text_style=ft.TextStyle(weight=ft.FontWeight.W_500, size=13),
         ),
@@ -264,6 +264,6 @@ def nav_item(icon, label_text: str, active: bool = False, on_click=None, badge: 
 def section_label(text: str) -> ft.Container:
     return ft.Container(
         content=ft.Text(text.upper(), size=10, weight=ft.FontWeight.W_500,
-                        color=TEXT_MUTED, letter_spacing=1.2),
+                        color=TEXT_MUTED),
         padding=ft.padding.only(left=8, top=10, bottom=4),
     )
