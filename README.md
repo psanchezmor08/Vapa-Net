@@ -8,7 +8,7 @@
 
 ---
 
-## ✨ Novedades v2.1
+## ✨ Novedades v5
 
 ### 🆕 5 Nuevas Herramientas Avanzadas
 
