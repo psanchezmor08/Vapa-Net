@@ -22,7 +22,7 @@
 
 ### 🎯 Mejoras
 
-- ✅ **Topbar limpio**: Eliminado "v2.0" y "Sistema activo"
+- ✅ **Topbar limpio**: Eliminado "v4.0" y "Sistema activo"
 - ✅ **Historial visible** en todas las herramientas
 - ✅ **5 nuevas tablas de BD** con historial completo
 - ✅ **Tema oscuro mejorado** y más contraste
