@@ -1,0 +1,219 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                   SUGERENCIAS DE HERRAMIENTAS A AÑADIR                         ║
+║                              VapaNet v2.0+                                     ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+NIVEL DE DIFICULTAD Y PRIORIDAD:
+⭐ = Fácil (1-2 horas)
+⭐⭐ = Medio (2-4 horas)
+⭐⭐⭐ = Difícil (4+ horas)
+
+════════════════════════════════════════════════════════════════════════════════
+
+🔧 HERRAMIENTAS DE NETWORK (Prioritarias)
+────────────────────────────────────────────────────────────────────────────────
+
+1. 🌍 GEOIP LOOKUP ⭐
+   • Descripción: Localización geográfica de una IP
+   • Datos: País, región, ciudad, coordenadas, ISP
+   • API: ip-api.com (free tier 45 req/min) o ipinfo.io
+   • Historial: Sí
+   • Beneficio: Útil para investigar origen de conexiones sospechosas
+
+2. 📡 REVERSE DNS LOOKUP ⭐
+   • Descripción: Encuentra hostname a partir de IP (opuesto a DNS)
+   • Datos: PTR records, dominio asociado
+   • Implementación: Ya existe en core/network.py (expandir)
+   • Historial: Sí
+   • Beneficio: Identificar servidores por IP
+
+3. 🔐 SSL/TLS CERTIFICATE INFO ⭐⭐
+   • Descripción: Examina certificado SSL de un dominio
+   • Datos: Issuer, validity dates, CN, SANs, fingerprint
+   • Lib: ssl.create_default_context() + socket
+   • Historial: Sí
+   • Beneficio: Validar certificados, detectar expirados
+
+4. 🚀 SPEED TEST MEJORADO ⭐
+   • Actual: Descarga/upload/ping
+   • Mejoras:
+     - Seleccionar servidor de prueba (no solo CloudFlare)
+     - Mostrar gráfico histórico de velocidades
+     - Latencia a diferentes servidores (Cloudflare, Google DNS, etc)
+     - Jitter y pérdida de paquetes
+   • Historial: Ya existe
+
+5. 🔍 WHOIS AVANZADO ⭐⭐
+   • Actual: Solo info básica de dominio
+   • Mejoras:
+     - Parsing completo de WHOIS raw data
+     - Mostrar nameservers, registro, propietario
+     - Verificar estado de dominio (activo/expirado)
+     - Fecha de expiración con alertas
+   • Historial: Ya existe
+
+════════════════════════════════════════════════════════════════════════════════
+
+📊 HERRAMIENTAS DE ANÁLISIS (Recomendadas)
+────────────────────────────────────────────────────────────────────────────────
+
+6. 📈 BANDWIDTH MONITOR (Monitoreo en tiempo real) ⭐⭐
+   • Descripción: Monitor en vivo de uso de red (MB/s en/out)
+   • Datos: Tráfico actual, máximo, promedio por interfaz
+   • Lib: psutil (requiere instalación)
+   • Historial: Gráfico con últimos 5 minutos
+   • Beneficio: Detectar consumo anómalo
+
+7. 🌐 HTTP HEADER ANALYZER ⭐
+   • Descripción: Analiza headers HTTP/HTTPS de un sitio
+   • Datos: Status code, Server, Content-Type, Security headers, etc
+   • Implementación: urllib + parse headers
+   • Historial: Sí
+   • Beneficio: Auditoría de seguridad web
+
+8. 🔗 LINK CHECKER (Verificador de enlaces) ⭐
+   • Descripción: Verifica múltiples URLs simultáneamente
+   • Datos: Status code, redirect, tiempo de respuesta
+   • Interfaz: Textarea con URLs (una por línea)
+   • Historial: Sí
+   • Beneficio: Auditoría de sitios web
+
+9. 📋 DNS PROPAGATION CHECKER ⭐⭐
+   • Descripción: Verifica DNS en servidores públicos globales
+   • Servidores: Google (8.8.8.8), CloudFlare (1.1.1.1), OpenDNS, etc
+   • Datos: IP resuelto por cada servidor, tiempos
+   • Historial: Sí
+   • Beneficio: Verificar propagación de DNS changes
+
+10. 🎯 SUBDOMAIN SCANNER ⭐⭐⭐
+    • Descripción: Encuentra subdominios de un dominio
+    • Métodos:
+      - Fuerza bruta (lista de 1000 subdominios comunes)
+      - AXFR transfer (si servidor lo permite)
+    • Historial: Sí
+    • Beneficio: Reconocimiento de infraestructura
+    • ⚠️ Responsabilidad: Solo en dominios propios
+
+════════════════════════════════════════════════════════════════════════════════
+
+🛡️ HERRAMIENTAS DE SEGURIDAD (Avanzadas)
+────────────────────────────────────────────────────────────────────────────────
+
+11. 🔓 OPEN PORT SCANNER (ya existe, pero mejorable) ⭐⭐
+    • Mejoras:
+      - Mostrar puerto → servicio común mapping
+      - Detectar vulnerabilidades conocidas por puerto/servicio
+      - Escaneo UDP además de TCP
+      - Grabado de escaneos históricos
+
+12. 🚨 BLACKLIST CHECKER ⭐⭐
+    • Descripción: Verifica si IP/dominio está en listas negras
+    • Listas: Spamhaus, ProjectHoneypot, AbuseIPDB
+    • Historial: Sí
+    • Beneficio: Detectar si IP está comprometida/listada
+
+13. 🔐 PASSWORD STRENGTH ANALYZER ⭐
+    • Descripción: Analiza fortaleza de contraseña (local, sin enviar)
+    • Datos: Entropía, tiempo de crack, sugerencias
+    • Historial: NO (por seguridad)
+    • Beneficio: Educación sobre contraseñas
+
+════════════════════════════════════════════════════════════════════════════════
+
+🗺️ HERRAMIENTAS LOCALES (Sistema)
+────────────────────────────────────────────────────────────────────────────────
+
+14. 🖥️ NETWORK INTERFACE INFO ⭐
+    • Descripción: Información de adaptadores de red locales
+    • Datos: IP, MAC, máscara, gateway, estado
+    • Lib: socket + netifaces (opcional) o platform-dependent
+    • Historial: NO
+    • Beneficio: Diagnóstico de red local
+
+15. 📶 ARP TABLE VIEWER ⭐⭐
+    • Descripción: Muestra tabla ARP de máquina local
+    • Datos: IP → MAC mappings en red local
+    • Lib: subprocess (arp command)
+    • Historial: Snapshots históricos
+    • Beneficio: Detectar MAC spoofing, dispositivos en red
+
+16. 🔄 ROUTE TABLE VIEWER ⭐
+    • Descripción: Muestra tabla de enrutamiento local
+    • Datos: Destino, puerta de enlace, métrica, interfaz
+    • Lib: subprocess (route/ip route)
+    • Historial: Cambios detectados
+    • Beneficio: Diagnóstico de problemas de enrutamiento
+
+════════════════════════════════════════════════════════════════════════════════
+
+📱 HERRAMIENTAS DE UTILIDAD (Complementarias)
+────────────────────────────────────────────────────────────────────────────────
+
+17. 🔤 PORT TO SERVICE LOOKUP ⭐
+    • Descripción: Busca servicio/protocolo para un puerto
+    • Base de datos: /etc/services o hardcoded (de IANA)
+    • Historial: Consultas recientes
+
+18. 🌏 BULK IP LOCATION LOOKUP ⭐⭐
+    • Descripción: Geolocación para múltiples IPs
+    • Interfaz: Textarea, procesar 10-50 IPs
+    • Historial: Sí
+    • Beneficio: Mapeo de ubicación de servidores
+
+19. 📊 NETWORK GRAPH / TOPOLOGY ⭐⭐⭐
+    • Descripción: Visualiza topología de red local
+    • Datos: Nodos (dispositivos) y conexiones
+    • Lib: graphviz o networkx
+    • Historial: NO (complejo de guardar)
+    • Beneficio: Visualización clara de infraestructura
+
+════════════════════════════════════════════════════════════════════════════════
+
+🎯 MI RECOMENDACIÓN - ORDEN DE IMPLEMENTACIÓN
+────────────────────────────────────────────────────────────────────────────────
+
+FASE 1 (próxima) - TOP 5 por utilidad:
+  1. SSL/TLS Certificate Info (seguridad web crítica)
+  2. Geoip Lookup (investigación común)
+  3. HTTP Header Analyzer (auditoría web)
+  4. DNS Propagation Checker (diagnóstico DNS)
+  5. Reverse DNS Lookup (completar suite DNS)
+
+FASE 2 (después):
+  6. Bandwidth Monitor (monitoreo en tiempo real)
+  7. Link Checker (auditoría masiva)
+  8. Blacklist Checker (seguridad)
+
+FASE 3 (futuro):
+  9. Subdomain Scanner (pentesting)
+  10. Network Interface Info (diagnóstico local)
+
+════════════════════════════════════════════════════════════════════════════════
+
+✅ HERRAMIENTAS QUE YA TIENES Y FUNCIONAN BIEN:
+────────────────────────────────────────────────────────────────────────────────
+  ✓ Speed Test
+  ✓ Ping / Batch Ping
+  ✓ Port Scanner
+  ✓ DNS Lookup
+  ✓ Traceroute
+  ✓ Sentinel (monitor continuo)
+  ✓ Monitor URLs
+  ✓ Subnet Calculator
+  ✓ WHOIS (básico)
+
+════════════════════════════════════════════════════════════════════════════════
+
+🔨 CAMBIOS YA REALIZADOS (esta sesión):
+────────────────────────────────────────────────────────────────────────────────
+✓ Flet 0.84 API compatibility fixes
+✓ ft.run() actualizado
+✓ Button API (ElevatedButton → Button)
+✓ Dropdown (on_change → on_select)
+✓ Padding/Border/Margin APIs modernizadas
+✓ Topbar limpiado (quitado v2.0 y "Sistema activo")
+✓ ui/app.py recreado completo
+
+════════════════════════════════════════════════════════════════════════════════
+
+¿CUÁL HERRAMIENTA TE INTERESA PRIMERO?

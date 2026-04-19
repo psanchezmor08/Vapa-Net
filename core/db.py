@@ -82,6 +82,17 @@ def initialize_db():
     """)
 
     c.execute("""
+        CREATE TABLE IF NOT EXISTS traceroute_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            host TEXT NOT NULL,
+            hop INTEGER,
+            ip TEXT,
+            avg_ms REAL
+        )
+    """)
+
+    c.execute("""
         CREATE TABLE IF NOT EXISTS dns_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp TEXT NOT NULL,
@@ -107,6 +118,68 @@ def initialize_db():
         CREATE TABLE IF NOT EXISTS settings (
             key TEXT PRIMARY KEY,
             value TEXT
+        )
+    """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS ssl_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            domain TEXT NOT NULL,
+            cn TEXT,
+            issuer TEXT,
+            valid_from TEXT,
+            valid_to TEXT,
+            days_until_expiry INTEGER,
+            is_expired INTEGER,
+            response_ms REAL
+        )
+    """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS geoip_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            ip TEXT NOT NULL,
+            country TEXT,
+            region TEXT,
+            city TEXT,
+            latitude REAL,
+            longitude REAL,
+            isp TEXT,
+            response_ms REAL
+        )
+    """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS http_headers_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            url TEXT NOT NULL,
+            status_code INTEGER,
+            server TEXT,
+            content_type TEXT,
+            response_ms REAL
+        )
+    """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS dns_propagation_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            domain TEXT NOT NULL,
+            propagated INTEGER,
+            results TEXT
+        )
+    """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS reverse_dns_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            ip TEXT NOT NULL,
+            hostname TEXT,
+            response_ms REAL
         )
     """)
 
@@ -305,6 +378,106 @@ def get_port_scan_history(limit: int = 200) -> list:
     conn = get_connection()
     rows = conn.execute(
         "SELECT * FROM port_scan_history ORDER BY timestamp DESC LIMIT ?", (limit,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+# SSL History
+def insert_ssl_result(domain: str, cn: str, issuer: str, valid_from: str, valid_to: str, days_until_expiry: int, is_expired: int, response_ms: float):
+    conn = get_connection()
+    conn.execute(
+        "INSERT INTO ssl_history (timestamp, domain, cn, issuer, valid_from, valid_to, days_until_expiry, is_expired, response_ms) VALUES (?,?,?,?,?,?,?,?,?)",
+        (datetime.now().isoformat(), domain, cn, issuer, valid_from, valid_to, days_until_expiry, is_expired, response_ms)
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_ssl_history(limit: int = 20) -> list:
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT * FROM ssl_history ORDER BY timestamp DESC LIMIT ?", (limit,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+# Geoip History
+def insert_geoip_result(ip: str, country: str, region: str, city: str, lat: float, lon: float, isp: str, response_ms: float):
+    conn = get_connection()
+    conn.execute(
+        "INSERT INTO geoip_history (timestamp, ip, country, region, city, latitude, longitude, isp, response_ms) VALUES (?,?,?,?,?,?,?,?,?)",
+        (datetime.now().isoformat(), ip, country, region, city, lat, lon, isp, response_ms)
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_geoip_history(limit: int = 20) -> list:
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT * FROM geoip_history ORDER BY timestamp DESC LIMIT ?", (limit,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+# HTTP Headers History
+def insert_http_headers_result(url: str, status_code: int, server: str, content_type: str, response_ms: float):
+    conn = get_connection()
+    conn.execute(
+        "INSERT INTO http_headers_history (timestamp, url, status_code, server, content_type, response_ms) VALUES (?,?,?,?,?,?)",
+        (datetime.now().isoformat(), url, status_code, server, content_type, response_ms)
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_http_headers_history(limit: int = 20) -> list:
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT * FROM http_headers_history ORDER BY timestamp DESC LIMIT ?", (limit,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+# DNS Propagation History
+def insert_dns_propagation_result(domain: str, propagated: int, results: str):
+    conn = get_connection()
+    conn.execute(
+        "INSERT INTO dns_propagation_history (timestamp, domain, propagated, results) VALUES (?,?,?,?)",
+        (datetime.now().isoformat(), domain, propagated, results)
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_dns_propagation_history(limit: int = 20) -> list:
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT * FROM dns_propagation_history ORDER BY timestamp DESC LIMIT ?", (limit,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+# Reverse DNS History
+def insert_reverse_dns_result(ip: str, hostname: str, response_ms: float):
+    conn = get_connection()
+    conn.execute(
+        "INSERT INTO reverse_dns_history (timestamp, ip, hostname, response_ms) VALUES (?,?,?,?)",
+        (datetime.now().isoformat(), ip, hostname, response_ms)
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_reverse_dns_history(limit: int = 20) -> list:
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT * FROM reverse_dns_history ORDER BY timestamp DESC LIMIT ?", (limit,)
     ).fetchall()
     conn.close()
     return [dict(r) for r in rows]

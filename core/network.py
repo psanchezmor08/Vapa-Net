@@ -631,3 +631,301 @@ def get_local_ip() -> str:
         return ip
     except Exception:
         return "127.0.0.1"
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# SSL/TLS CERTIFICATE INFO
+# ──────────────────────────────────────────────────────────────────────────────
+
+def get_ssl_info(domain: str, port: int = 443) -> dict:
+    """Obtiene información del certificado SSL/TLS de un dominio."""
+    import ssl
+    from datetime import datetime
+    
+    start = time.monotonic()
+    try:
+        context = ssl.create_default_context()
+        with socket.create_connection((domain, port), timeout=5) as sock:
+            with context.wrap_socket(sock, server_hostname=domain) as ssock:
+                cert = ssock.getpeercert()
+                cert_bin = ssock.getpeercert(binary_form=True)
+        
+        elapsed = (time.monotonic() - start) * 1000
+        
+        # Parse certificate
+        subject = dict(x[0] for x in cert.get('subject', []))
+        issuer = dict(x[0] for x in cert.get('issuer', []))
+        
+        # Dates
+        not_before = datetime.strptime(cert.get('notBefore', ''), '%b %d %H:%M:%S %Y %Z')
+        not_after = datetime.strptime(cert.get('notAfter', ''), '%b %d %H:%M:%S %Y %Z')
+        now = datetime.utcnow()
+        days_until_expiry = (not_after - now).days
+        
+        # SANs
+        sans = []
+        for sub in cert.get('subjectAltName', []):
+            if sub[0] == 'DNS':
+                sans.append(sub[1])
+        
+        return {
+            'domain': domain,
+            'port': port,
+            'valid': True,
+            'cn': subject.get('commonName', 'N/A'),
+            'issuer': issuer.get('organizationName', 'N/A'),
+            'issued_by': issuer.get('commonName', 'N/A'),
+            'valid_from': not_before.strftime('%Y-%m-%d %H:%M:%S'),
+            'valid_to': not_after.strftime('%Y-%m-%d %H:%M:%S'),
+            'days_until_expiry': days_until_expiry,
+            'is_expired': days_until_expiry < 0,
+            'warning': '⚠️ EXPIRED' if days_until_expiry < 0 else ('⚠️ EXPIRES SOON' if days_until_expiry < 30 else '✓ OK'),
+            'san': ', '.join(sans) if sans else 'None',
+            'version': cert.get('version', 'N/A'),
+            'serial': cert.get('serialNumber', 'N/A'),
+            'response_ms': round(elapsed, 1),
+        }
+    except ssl.SSLError as e:
+        elapsed = (time.monotonic() - start) * 1000
+        return {
+            'domain': domain,
+            'port': port,
+            'valid': False,
+            'error': f'SSL Error: {str(e)}',
+            'response_ms': round(elapsed, 1),
+        }
+    except Exception as e:
+        elapsed = (time.monotonic() - start) * 1000
+        return {
+            'domain': domain,
+            'port': port,
+            'valid': False,
+            'error': str(e),
+            'response_ms': round(elapsed, 1),
+        }
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# GEOIP LOOKUP
+# ──────────────────────────────────────────────────────────────────────────────
+
+def geoip_lookup(ip: str) -> dict:
+    """Obtiene localización geográfica de una IP usando ip-api.com."""
+    import urllib.request
+    import urllib.error
+    import json
+    
+    start = time.monotonic()
+    try:
+        url = f"http://ip-api.com/json/{ip}?fields=status,country,regionName,city,lat,lon,isp,org,as"
+        with urllib.request.urlopen(url, timeout=5) as resp:
+            data = json.loads(resp.read().decode())
+        
+        elapsed = (time.monotonic() - start) * 1000
+        
+        if data.get('status') == 'fail':
+            return {
+                'ip': ip,
+                'valid': False,
+                'error': data.get('message', 'Unknown error'),
+                'response_ms': round(elapsed, 1),
+            }
+        
+        return {
+            'ip': ip,
+            'valid': True,
+            'country': data.get('country', 'N/A'),
+            'region': data.get('regionName', 'N/A'),
+            'city': data.get('city', 'N/A'),
+            'latitude': data.get('lat', 'N/A'),
+            'longitude': data.get('lon', 'N/A'),
+            'coordinates': f"{data.get('lat', 'N/A')}, {data.get('lon', 'N/A')}",
+            'isp': data.get('isp', 'N/A'),
+            'org': data.get('org', 'N/A'),
+            'asn': data.get('as', 'N/A'),
+            'response_ms': round(elapsed, 1),
+        }
+    except (urllib.error.URLError, ConnectionError, TimeoutError):
+        elapsed = (time.monotonic() - start) * 1000
+        # Fallback: try alternative service
+        try:
+            url2 = f"https://ipinfo.io/{ip}/json"
+            with urllib.request.urlopen(url2, timeout=5) as resp:
+                data = json.loads(resp.read().decode())
+            elapsed = (time.monotonic() - start) * 1000
+            
+            loc = data.get('loc', 'N/A,N/A').split(',')
+            return {
+                'ip': ip,
+                'valid': True,
+                'country': data.get('country', 'N/A'),
+                'region': data.get('region', 'N/A'),
+                'city': data.get('city', 'N/A'),
+                'latitude': float(loc[0]) if loc[0] != 'N/A' else 'N/A',
+                'longitude': float(loc[1]) if len(loc) > 1 and loc[1] != 'N/A' else 'N/A',
+                'coordinates': f"{loc[0]}, {loc[1]}" if len(loc) > 1 else 'N/A',
+                'isp': data.get('org', 'N/A'),
+                'org': data.get('org', 'N/A'),
+                'asn': data.get('asn', 'N/A'),
+                'response_ms': round(elapsed, 1),
+            }
+        except Exception:
+            elapsed = (time.monotonic() - start) * 1000
+            return {
+                'ip': ip,
+                'valid': False,
+                'error': 'Services unavailable - no connection to geoip services',
+                'response_ms': round(elapsed, 1),
+            }
+    except Exception as e:
+        elapsed = (time.monotonic() - start) * 1000
+        return {
+            'ip': ip,
+            'valid': False,
+            'error': str(e),
+            'response_ms': round(elapsed, 1),
+        }
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# HTTP HEADER ANALYZER
+# ──────────────────────────────────────────────────────────────────────────────
+
+def get_http_headers(url: str, timeout: int = 5) -> dict:
+    """Obtiene headers HTTP/HTTPS de una URL."""
+    import urllib.request
+    import urllib.error
+    
+    if not url.startswith(('http://', 'https://')):
+        url = 'https://' + url
+    
+    start = time.monotonic()
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'VapaNet/1.0'})
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            status_code = resp.getcode()
+            headers = dict(resp.headers)
+        
+        elapsed = (time.monotonic() - start) * 1000
+        
+        return {
+            'url': url,
+            'valid': True,
+            'status_code': status_code,
+            'status_text': 'OK' if 200 <= status_code < 300 else 'WARNING' if 300 <= status_code < 400 else 'ERROR',
+            'headers': headers,
+            'response_ms': round(elapsed, 1),
+        }
+    except urllib.error.HTTPError as e:
+        elapsed = (time.monotonic() - start) * 1000
+        return {
+            'url': url,
+            'valid': True,
+            'status_code': e.code,
+            'status_text': 'ERROR',
+            'headers': dict(e.headers) if hasattr(e, 'headers') else {},
+            'response_ms': round(elapsed, 1),
+        }
+    except Exception as e:
+        elapsed = (time.monotonic() - start) * 1000
+        return {
+            'url': url,
+            'valid': False,
+            'error': str(e),
+            'response_ms': round(elapsed, 1),
+        }
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# DNS PROPAGATION CHECKER
+# ──────────────────────────────────────────────────────────────────────────────
+
+DNS_SERVERS = {
+    'Google': ('8.8.8.8', 53),
+    'CloudFlare': ('1.1.1.1', 53),
+    'OpenDNS': ('208.67.222.222', 53),
+    'Quad9': ('9.9.9.9', 53),
+    'Local': ('127.0.0.1', 53),
+}
+
+def check_dns_propagation(domain: str) -> dict:
+    """Verifica propagación de DNS en múltiples servidores públicos."""
+    results = {}
+    
+    for name, (ip, port) in DNS_SERVERS.items():
+        start = time.monotonic()
+        try:
+            # Try nslookup against specific server
+            import subprocess
+            sys = platform.system().lower()
+            if sys == 'windows':
+                cmd = ['nslookup', domain, ip]
+            else:
+                cmd = ['nslookup', '-h', ip, domain]
+            
+            res = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+            elapsed = round((time.monotonic() - start) * 1000, 1)
+            
+            # Parse output for A record
+            resolved_ip = None
+            for line in res.stdout.split('\n'):
+                if 'Address:' in line and not line.strip().startswith('Server'):
+                    resolved_ip = line.split('Address:')[1].strip()
+                    break
+            
+            results[name] = {
+                'server': ip,
+                'resolved_ip': resolved_ip or 'Not resolved',
+                'response_ms': elapsed,
+                'status': 'Propagated' if resolved_ip else 'Not propagated',
+            }
+        except Exception as e:
+            elapsed = round((time.monotonic() - start) * 1000, 1)
+            results[name] = {
+                'server': ip,
+                'resolved_ip': 'Error',
+                'response_ms': elapsed,
+                'status': f'Error: {str(e)}',
+            }
+    
+    return {
+        'domain': domain,
+        'results': results,
+        'propagated': sum(1 for r in results.values() if r['status'] == 'Propagated') == len(results),
+    }
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# REVERSE DNS
+# ──────────────────────────────────────────────────────────────────────────────
+
+def reverse_dns(ip: str) -> dict:
+    """Reverse DNS lookup - encuentra hostname para una IP."""
+    start = time.monotonic()
+    try:
+        hostname, aliaslist, addresslist = socket.gethostbyaddr(ip)
+        elapsed = (time.monotonic() - start) * 1000
+        return {
+            'ip': ip,
+            'valid': True,
+            'hostname': hostname,
+            'aliases': ', '.join(aliaslist) if aliaslist else 'None',
+            'addresses': ', '.join(addresslist) if addresslist else 'None',
+            'response_ms': round(elapsed, 1),
+        }
+    except socket.herror as e:
+        elapsed = (time.monotonic() - start) * 1000
+        return {
+            'ip': ip,
+            'valid': False,
+            'error': f'No reverse DNS record found',
+            'response_ms': round(elapsed, 1),
+        }
+    except Exception as e:
+        elapsed = (time.monotonic() - start) * 1000
+        return {
+            'ip': ip,
+            'valid': False,
+            'error': str(e),
+            'response_ms': round(elapsed, 1),
+        }

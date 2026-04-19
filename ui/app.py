@@ -51,11 +51,6 @@ class VapaNetApp:
                     ], spacing=0, tight=True),
                 ], spacing=10),
                 ft.Row(expand=True),
-                ft.Row([
-                    ft.Container(width=7, height=7, bgcolor=T.STATUS_UP, border_radius=4),
-                    ft.Text("Sistema activo", size=11, color=T.TEXT_MUTED),
-                ], spacing=6),
-                ft.Text("v2.0", size=11, color=T.LIME_MUTED),
             ], spacing=16, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             bgcolor=T.DARK_SURFACE,
             border=ft.Border.only(bottom=ft.BorderSide(1, T.DARK_BORDER)),
@@ -64,17 +59,23 @@ class VapaNetApp:
 
         nav_def = [
             ("dashboard",  "Dashboard",          ft.Icons.GRID_VIEW_ROUNDED,  ""),
-            ("__sep1__",   "",                   None,                         "Herramientas"),
+            ("__sep1__",   "",                   None,                         "Herramientas de Red"),
             ("speed",      "Speed Test",         ft.Icons.SPEED,               ""),
             ("ping",       "Ping",               ft.Icons.WIFI_TETHERING,      ""),
             ("ports",      "Escáner de Puertos", ft.Icons.RADAR,               ""),
             ("dns",        "DNS Lookup",         ft.Icons.DNS,                 ""),
             ("traceroute", "Traceroute",         ft.Icons.ROUTE,               ""),
             ("batch",      "Batch Ping",         ft.Icons.PLAYLIST_PLAY,       ""),
-            ("__sep2__",   "",                   None,                         "Monitorización"),
+            ("__sep2__",   "",                   None,                         "Análisis Avanzado"),
+            ("ssl",        "SSL/TLS Info",       ft.Icons.VERIFIED_USER,       ""),
+            ("geoip",      "Geoip Lookup",       ft.Icons.PUBLIC,              ""),
+            ("httpheaders","HTTP Headers",       ft.Icons.HTTP,                ""),
+            ("dnsprop",    "DNS Propagation",    ft.Icons.DNS,                 ""),
+            ("reversedns", "Reverse DNS",        ft.Icons.LANGUAGE,            ""),
+            ("__sep3__",   "",                   None,                         "Monitorización"),
             ("sentinel",   "Sentinel",           ft.Icons.VISIBILITY,          ""),
             ("monitor",    "Monitor URLs",       ft.Icons.LINK,                ""),
-            ("__sep3__",   "",                   None,                         "Utilidades"),
+            ("__sep4__",   "",                   None,                         "Utilidades"),
             ("subnet",     "Subnet Calc",        ft.Icons.CALCULATE,           ""),
             ("whois",      "WHOIS",              ft.Icons.INFO_OUTLINE,        ""),
         ]
@@ -153,6 +154,11 @@ class VapaNetApp:
         from ui.views.monitor    import MonitorView
         from ui.views.subnet     import SubnetView
         from ui.views.whois      import WhoisView
+        from ui.views.ssl        import SSLView
+        from ui.views.geoip      import GeoIPView
+        from ui.views.httpheaders import HTTPHeadersView
+        from ui.views.dnsprop    import DNSPropView
+        from ui.views.reversedns import ReverseDNSView
 
         views = {
             "dashboard":  lambda: DashboardView(navigate_fn=self._navigate),
@@ -166,6 +172,11 @@ class VapaNetApp:
             "monitor":    MonitorView,
             "subnet":     SubnetView,
             "whois":      WhoisView,
+            "ssl":        SSLView,
+            "geoip":      GeoIPView,
+            "httpheaders": HTTPHeadersView,
+            "dnsprop":    DNSPropView,
+            "reversedns": ReverseDNSView,
         }
         factory = views.get(key, lambda: ft.Text("Vista no encontrada", color=T.TEXT_MUTED))
         return factory()
