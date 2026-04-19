@@ -1,4 +1,4 @@
-# 🌐 VapaNet v2.1 - Network Intelligence Suite
+# 🌐 VapaNet v5 - Network Intelligence Suite
 
 **Aplicación de escritorio de análisis de redes avanzado con 16 herramientas integradas**
 
